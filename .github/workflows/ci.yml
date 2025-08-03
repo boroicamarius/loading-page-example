@@ -33,12 +33,14 @@ jobs:
         # QUALITY GATE: Fails on style violations
 
       # BUILD STAGE
-      - name: Build Docker image
+      - name: Build project
         run: docker build -t your-image-name .
+        # QUALITY GATE: Fails on build errors
 
       # TEST STAGE
       - name: Run tests
-        run: echo "No tests defined for this static web application"
-        # QUALITY GATE: No test failures (no tests defined)
+        run: echo "No tests defined for static site"
+        # QUALITY GATE: No tests to fail
 
-      # DEPLOYMENT STAGE (not included due to lack of deployment evidence)
+      # DEPLOYMENT STAGE (if evidence found, but none found here)
+      # No deployment steps included as no deployment evidence was found.
