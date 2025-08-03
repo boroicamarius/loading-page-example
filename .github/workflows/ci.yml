@@ -9,38 +9,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ENVIRONMENT SETUP
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-
-      # DEPENDENCY CACHING
-      - name: Cache Node.js modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-
-      # LINTING STAGE
-      - name: Configure ESLint
+      - name: Setup Docker
         run: |
-          npm install eslint --save-dev
-          npx eslint --init
+          sudo apt-get update
+          sudo apt-get install -y docker.io
 
-      - name: Run Linter
-        run: npx eslint .
-        # QUALITY GATE: Fails on style violations
+      - name: Build Docker image
+        run: docker build -t my-static-app .
 
-      # BUILD STAGE
-      - name: Build project
-        run: docker build -t your-image-name .
-        # QUALITY GATE: Fails on build errors
+      - name: Run Docker container
+        run: docker run -d -p 80:80 my-static-app
 
-      # TEST STAGE
-      - name: Run tests
-        run: echo "No tests defined for static site"
-        # QUALITY GATE: No tests to fail
+      - name: Check Docker container status
+        run: docker ps
 
-      # DEPLOYMENT STAGE (if evidence found, but none found here)
-      # No deployment steps included as no deployment evidence was found.
+      - name: Stop Docker container
+        run: docker stop $(docker ps -q)
+
+      - name: Remove Docker image
+        run: docker rmi my-static-app
