@@ -10,27 +10,36 @@ jobs:
         uses: actions/checkout@v4
 
       # ENVIRONMENT SETUP
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
 
       # DEPENDENCY CACHING
-      - name: Cache Docker layers
+      - name: Cache Node.js modules
         uses: actions/cache@v3
         with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+          path: |
+            ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+
+      # LINTING STAGE
+      - name: Configure ESLint
+        run: |
+          npm install eslint --save-dev
+          npx eslint --init
+
+      - name: Run Linter
+        run: npx eslint .
+        # QUALITY GATE: Fails on style violations
 
       # BUILD STAGE
       - name: Build Docker image
-        run: docker-compose build
-        # QUALITY GATE: Fails on build errors
+        run: docker build -t your_image_name .
 
       # TEST STAGE
       - name: Run tests
         run: echo "No tests defined for this static web application."
-        # QUALITY GATE: No test failures
+        # QUALITY GATE: No test failures, but no tests defined
 
-      # DEPLOYMENT STAGE (if evidence found)
-      # No deployment steps included as no deployment evidence was found.
+      # DEPLOYMENT STAGE (not included as no deployment evidence found)
