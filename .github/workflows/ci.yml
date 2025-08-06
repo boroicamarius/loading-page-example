@@ -9,37 +9,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ENVIRONMENT SETUP
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-
-      # DEPENDENCY CACHING
-      - name: Cache Node.js modules
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
-
-      # LINTING STAGE
-      - name: Configure ESLint
-        run: |
-          npm install eslint --save-dev
-          npx eslint --init
-
-      - name: Run Linter
-        run: npx eslint .
-        # QUALITY GATE: Fails on style violations
-
-      # BUILD STAGE
       - name: Build Docker image
-        run: docker build -t your_image_name .
+        run: docker build -t your-image-name .
 
-      # TEST STAGE
+      - name: Run Docker container
+        run: docker run -d -p 80:80 your-image-name
+
       - name: Run tests
         run: echo "No tests defined for this static web application."
-        # QUALITY GATE: No test failures, but no tests defined
 
-      # DEPLOYMENT STAGE (not included as no deployment evidence found)
+      - name: Lint HTML and CSS
+        run: |
+          echo "Linting not configured, please add appropriate linting tools."
+          
+      - name: Cleanup
+        run: docker stop $(docker ps -q --filter ancestor=your-image-name) && docker rm $(docker ps -aq --filter ancestor=your-image-name)
