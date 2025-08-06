@@ -9,18 +9,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Build Docker image
-        run: docker build -t your-image-name .
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
 
-      - name: Run Docker container
-        run: docker run -d -p 80:80 your-image-name
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Run Linter
+        run: npm run lint
+        # QUALITY GATE: Fails on lint violations
+
+      - name: Build project
+        run: npm run build
+        # QUALITY GATE: Fails on build errors
 
       - name: Run tests
-        run: echo "No tests defined for this static web application."
-
-      - name: Lint HTML and CSS
-        run: |
-          echo "Linting not configured, please add appropriate linting tools."
-          
-      - name: Cleanup
-        run: docker stop $(docker ps -q --filter ancestor=your-image-name) && docker rm $(docker ps -aq --filter ancestor=your-image-name)
+        run: npm test
+        # QUALITY GATE: Fails on test failures
