@@ -19,8 +19,7 @@ jobs:
       - name: Cache Node.js modules
         uses: actions/cache@v3
         with:
-          path: |
-            ~/.npm
+          path: ~/.npm
           key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
 
       # LINTING STAGE
@@ -39,8 +38,8 @@ jobs:
 
       # TEST STAGE
       - name: Run tests
-        run: echo "No tests defined for this static web application."
-        # QUALITY GATE: No tests defined
+        run: echo "No tests defined for this static web application"
+        # QUALITY GATE: No tests to fail on
 
       # DEPLOYMENT STAGE
-      # No deployment steps included as no deployment secrets or configurations were found.
+      # No deployment steps included as no deployment evidence found
