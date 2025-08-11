@@ -27,19 +27,21 @@ jobs:
         run: |
           npm install eslint --save-dev
           npx eslint --init
+        # COMMENT: Auto-configured since no linter present
 
       - name: Run Linter
         run: npx eslint .
         # QUALITY GATE: Fails on style violations
 
       # BUILD STAGE
-      - name: Build Docker image
+      - name: Build project
         run: docker build -t your_image_name .
+        # QUALITY GATE: Fails on build errors
 
       # TEST STAGE
       - name: Run tests
-        run: echo "No tests defined for this static web application"
-        # QUALITY GATE: No tests to fail on
+        run: echo "No tests defined for static web application."
+        # QUALITY GATE: No tests to fail
 
-      # DEPLOYMENT STAGE
-      # No deployment steps included as no deployment evidence found
+      # DEPLOYMENT STAGE (if evidence found)
+      # No deployment steps included as no deployment evidence was found.
