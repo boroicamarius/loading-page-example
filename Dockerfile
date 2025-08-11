@@ -9,5 +9,7 @@ COPY script.js /usr/share/nginx/html/
 # Expose the default Nginx port
 EXPOSE 80
 
+RUN echo test
+
 # Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]
